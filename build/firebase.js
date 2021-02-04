@@ -13,6 +13,7 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
+import "firebase/storage";
 var Firebase = (function () {
     function Firebase(config, options) {
         var _this = this;
@@ -39,6 +40,7 @@ var Firebase = (function () {
         this.auth.useDeviceLanguage();
         this.db = app.firestore();
         this.functions = app.functions();
+        this.storage = app.storage();
         if ((options === null || options === void 0 ? void 0 : options.useEmulators) && window.location.hostname === "localhost") {
             this.auth.useEmulator("http://localhost:9099");
             this.db.settings({
