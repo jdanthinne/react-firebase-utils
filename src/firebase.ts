@@ -2,6 +2,7 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
+import "firebase/storage";
 import { CreateUserProps } from "./types";
 
 interface FirebaseConfig {
@@ -21,6 +22,7 @@ class Firebase {
   auth: app.auth.Auth;
   db: app.firestore.Firestore;
   functions: app.functions.Functions;
+  storage: app.storage.Storage;
 
   constructor(config: FirebaseConfig, options?: FirebaseOptions) {
     app.initializeApp(config);
@@ -29,6 +31,7 @@ class Firebase {
     this.auth.useDeviceLanguage();
     this.db = app.firestore();
     this.functions = app.functions();
+    this.storage = app.storage();
 
     if (options?.useEmulators && window.location.hostname === "localhost") {
       this.auth.useEmulator("http://localhost:9099");
