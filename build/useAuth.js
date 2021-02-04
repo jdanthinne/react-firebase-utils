@@ -63,14 +63,14 @@ function useAuth(props) {
         });
         var getCounts = function () { return __awaiter(_this, void 0, void 0, function () {
             var counts, countsData;
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0: return [4, firebase.doGetCounts()];
                     case 1:
-                        counts = _b.sent();
+                        counts = _c.sent();
                         countsData = counts.data;
-                        setUsersCount((_a = countsData.find(function (count) { return count.collection === props.usersCollectionName; })) === null || _a === void 0 ? void 0 : _a.count);
+                        setUsersCount((_b = (_a = countsData.find(function (count) { return count.collection === props.usersCollectionName; })) === null || _a === void 0 ? void 0 : _a.count) !== null && _b !== void 0 ? _b : 0);
                         return [2];
                 }
             });

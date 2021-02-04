@@ -61,7 +61,7 @@ function useAuth<UserType extends IdentifiedFirestoreDocument>(
   }, []);
 
   useEffect(() => {
-    if (usersCount === 0) {
+    if (usersCount === 0 && authUser === null) {
       history.push(props.installPath);
     } else if (usersCount !== undefined) {
       if (authStarted) {
