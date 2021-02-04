@@ -85,7 +85,7 @@ function useAuth(props) {
         props.onError({ textId: messageId, redirectPath: props.signinPath });
     }, []);
     useEffect(function () {
-        if (usersCount === 0) {
+        if (usersCount === 0 && authUser === null) {
             history.push(props.installPath);
         }
         else if (usersCount !== undefined) {
