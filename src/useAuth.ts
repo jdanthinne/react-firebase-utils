@@ -43,7 +43,7 @@ function useAuth<UserType extends IdentifiedFirestoreDocument>(
       setUsersCount(
         countsData.find(
           (count) => count.collection === props.usersCollectionName
-        )?.count
+        )?.count ?? 0
       );
     };
     getCounts();
