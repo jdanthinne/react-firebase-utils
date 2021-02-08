@@ -10,5 +10,7 @@ export default Firebase;
 export declare const FieldValue: typeof firebaseApp.firestore.FieldValue;
 export declare class Timestamp extends firebaseApp.firestore.Timestamp {
 }
+export declare class GeoPoint extends firebaseApp.firestore.GeoPoint {
+}
 export { FirebaseContext, useAuth, useCollection, useDocument, useCollectionGroup, };
 export type { CreateUserProps, IdentifiedFirestoreDocument };

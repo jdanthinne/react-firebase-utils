@@ -28,5 +28,13 @@ var Timestamp = (function (_super) {
     return Timestamp;
 }(firebaseApp.firestore.Timestamp));
 export { Timestamp };
+var GeoPoint = (function (_super) {
+    __extends(GeoPoint, _super);
+    function GeoPoint() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return GeoPoint;
+}(firebaseApp.firestore.GeoPoint));
+export { GeoPoint };
 export { FirebaseContext, useAuth, useCollection, useDocument, useCollectionGroup, };
 //# sourceMappingURL=index.js.map

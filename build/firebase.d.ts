@@ -25,7 +25,9 @@ declare class Firebase {
     doSignInWithEmailAndPassword: (email: string, password: string) => Promise<app.auth.UserCredential>;
     doSignOut: () => Promise<void>;
     doSendPasswordResetEmail: (email: string) => Promise<void>;
-    doCreateUser: (props: CreateUserProps) => Promise<app.functions.HttpsCallableResult>;
+    doCreateUser: (props: CreateUserProps) => Promise<{
+        uid: string;
+    }>;
     doUpdateUser: ({ uid, values }: {
         uid: string;
         values: CreateUserProps;

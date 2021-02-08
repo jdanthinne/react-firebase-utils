@@ -51,8 +51,13 @@ class Firebase {
     this.auth.sendPasswordResetEmail(email);
 
   // Users
-  doCreateUser = (props: CreateUserProps) =>
-    this.functions.httpsCallable("createAuthUser")(props);
+  doCreateUser = async (props: CreateUserProps) => {
+    return new Promise<{uid: string}>(async (resolve) => {
+      const result = await this.functions.httpsCallable("createAuthUser")(props);
+      resolve({...result.data});
+    })
+    
+  };
   doUpdateUser = ({ uid, values }: { uid: string; values: CreateUserProps }) =>
     this.functions.httpsCallable("updateAuthUser")({ uid: uid, ...values });
   doDeleteUser = (uid: string) =>
