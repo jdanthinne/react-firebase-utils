@@ -12,6 +12,7 @@ export default Firebase;
 
 export const FieldValue = firebaseApp.firestore.FieldValue;
 export class Timestamp extends firebaseApp.firestore.Timestamp {}
+export class GeoPoint extends firebaseApp.firestore.GeoPoint {}
 
 export {
   FirebaseContext,
