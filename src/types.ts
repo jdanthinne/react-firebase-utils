@@ -8,6 +8,4 @@ export interface CreateUserProps {
   lastName: string;
   email: string;
   password: string;
-  passwordVerify: string;
-  role: string;
 }
