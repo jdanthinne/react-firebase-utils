@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-utils",
-  "version": "0.1.13",
+  "version": "0.2.0",
   "description": "React Firebase utils",
   "main": "build/index.js",
   "scripts": {
