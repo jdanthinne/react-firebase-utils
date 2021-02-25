@@ -14,37 +14,38 @@ interface Props {
   once?: boolean;
 }
 
-interface Data<T> {
-  loading: boolean;
-  documents: T[];
-}
-
-function useCollection<T extends IdentifiedFirestoreDocument>({
-  name,
-  where,
-  once = false,
-}: Props) {
+function useCollection<T extends IdentifiedFirestoreDocument>(props: Props) {
   const firebaseContext = useContext(FirebaseContext);
-  const [documents, setDocuments] = useState<Data<T>>({
-    loading: true,
-    documents: [],
-  });
+  const [documents, setDocuments] = useState<T[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const query = firebaseContext!.db.collectionGroup(name);
+    const observer = refresh();
+
+    return () => {
+      observer?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const refresh = () => {
+    setLoading(true);
+    setDocuments([]);
+
+    const query = firebaseContext!.db.collectionGroup(props.name);
 
     let finalQueryFiltered;
-    if (where) {
+    if (props.where) {
       finalQueryFiltered = query.where(
-        where.field,
-        where.operator ?? "==",
-        where.value
+        props.where.field,
+        props.where.operator ?? "==",
+        props.where.value
       );
     } else {
       finalQueryFiltered = query;
     }
 
-    if (once) {
+    if (props.once) {
       finalQueryFiltered.get().then(_handleSnapshots).catch(_handleError);
     } else {
       const observer = finalQueryFiltered.onSnapshot(
@@ -56,8 +57,7 @@ function useCollection<T extends IdentifiedFirestoreDocument>({
         observer();
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }
 
   const _handleSnapshots = (snapshot: firebase.firestore.QuerySnapshot) => {
     if (snapshot.size) {
@@ -70,18 +70,20 @@ function useCollection<T extends IdentifiedFirestoreDocument>({
         } as T)
       );
 
-      setDocuments({ loading: false, documents: documents });
+      setDocuments(documents);
     } else {
-      setDocuments({ loading: false, documents: [] });
+      setDocuments([]);
     }
+    setLoading(false);
   };
 
   const _handleError = (error: Error) => {
     console.log("Error getting collectionGroup", error);
-    setDocuments({ loading: false, documents: [] });
+    setDocuments([]);
+    setLoading(false);
   };
 
-  return documents;
+  return {loading, documents, refresh};
 }
 
 export default useCollection;

@@ -11,16 +11,21 @@ var __assign = (this && this.__assign) || function () {
 };
 import { useContext, useEffect, useState } from "react";
 import FirebaseContext from "./context";
-function useDocument(_a) {
-    var collectionName = _a.collectionName, uid = _a.uid, _b = _a.once, once = _b === void 0 ? false : _b;
+function useDocument(props) {
     var firebaseContext = useContext(FirebaseContext);
-    var _c = useState({
-        loading: true,
-        document: null,
-    }), document = _c[0], setDocument = _c[1];
+    var _a = useState(null), document = _a[0], setDocument = _a[1];
+    var _b = useState(true), loading = _b[0], setLoading = _b[1];
     useEffect(function () {
-        var path = firebaseContext.db.collection(collectionName).doc(uid);
-        if (once) {
+        var observer = refresh();
+        return function () {
+            observer === null || observer === void 0 ? void 0 : observer();
+        };
+    }, []);
+    var refresh = function () {
+        setLoading(true);
+        setDocument(null);
+        var path = firebaseContext.db.collection(props.collectionName).doc(props.uid);
+        if (props.once) {
             path.get().then(_handleSnapshot).catch(_handleError);
         }
         else {
@@ -29,23 +34,22 @@ function useDocument(_a) {
                 observer_1();
             };
         }
-    }, []);
+    };
     var _handleSnapshot = function (snapshot) {
         if (snapshot.exists) {
-            setDocument({
-                loading: false,
-                document: __assign({ uid: uid }, snapshot.data()),
-            });
+            setDocument(__assign({ uid: snapshot.id }, snapshot.data()));
         }
         else {
-            setDocument({ loading: false, document: null });
+            setDocument(null);
         }
+        setLoading(false);
     };
     var _handleError = function (error) {
         console.log("Error getting document", error);
-        setDocument({ loading: false, document: null });
+        setDocument(null);
+        setLoading(false);
     };
-    return document;
+    return { loading: loading, document: document, refresh: refresh };
 }
 export default useDocument;
 //# sourceMappingURL=useDocument.js.map

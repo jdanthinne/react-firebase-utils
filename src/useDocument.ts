@@ -10,26 +10,27 @@ interface Props {
   once?: boolean;
 }
 
-interface Data<T> {
-  loading: boolean;
-  document: T | null;
-}
-
-function useDocument<T extends IdentifiedFirestoreDocument>({
-  collectionName,
-  uid,
-  once = false,
-}: Props) {
+function useDocument<T extends IdentifiedFirestoreDocument>(props: Props) {
   const firebaseContext = useContext(FirebaseContext);
-  const [document, setDocument] = useState<Data<T>>({
-    loading: true,
-    document: null,
-  });
+  const [document, setDocument] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const path = firebaseContext!.db.collection(collectionName).doc(uid);
+    const observer = refresh();
 
-    if (once) {
+    return () => {
+      observer?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const refresh = () => {
+    setLoading(true);
+    setDocument(null);
+
+    const path = firebaseContext!.db.collection(props.collectionName).doc(props.uid);
+
+    if (props.once) {
       path.get().then(_handleSnapshot).catch(_handleError);
     } else {
       const observer = path.onSnapshot(_handleSnapshot, _handleError);
@@ -38,26 +39,24 @@ function useDocument<T extends IdentifiedFirestoreDocument>({
         observer();
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   const _handleSnapshot = (snapshot: firebase.firestore.DocumentSnapshot) => {
     if (snapshot.exists) {
-      setDocument({
-        loading: false,
-        document: { uid: uid, ...snapshot.data() } as T,
-      });
+      setDocument({uid: snapshot.id, ...snapshot.data() } as T);
     } else {
-      setDocument({ loading: false, document: null });
+      setDocument(null);
     }
+    setLoading(false);
   };
 
   const _handleError = (error: Error) => {
     console.log("Error getting document", error);
-    setDocument({ loading: false, document: null });
+    setDocument(null);
+    setLoading(false);
   };
 
-  return document;
+  return {loading, document, refresh};
 }
 
 export default useDocument;

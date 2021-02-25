@@ -4,9 +4,9 @@ interface Props {
     uid: string;
     once?: boolean;
 }
-interface Data<T> {
+declare function useDocument<T extends IdentifiedFirestoreDocument>(props: Props): {
     loading: boolean;
     document: T | null;
-}
-declare function useDocument<T extends IdentifiedFirestoreDocument>({ collectionName, uid, once, }: Props): Data<T>;
+    refresh: () => (() => void) | undefined;
+};
 export default useDocument;

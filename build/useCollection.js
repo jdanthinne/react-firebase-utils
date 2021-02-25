@@ -11,24 +11,28 @@ var __assign = (this && this.__assign) || function () {
 };
 import { useContext, useEffect, useState } from "react";
 import FirebaseContext from "./context";
-function useCollection(_a) {
-    var name = _a.name, where = _a.where, sort = _a.sort, limit = _a.limit, _b = _a.once, once = _b === void 0 ? false : _b, excludeID = _a.excludeID;
+function useCollection(props) {
     var firebaseContext = useContext(FirebaseContext);
-    var _c = useState({
-        loading: true,
-        documents: [],
-    }), documents = _c[0], setDocuments = _c[1];
+    var _a = useState([]), documents = _a[0], setDocuments = _a[1];
+    var _b = useState(true), loading = _b[0], setLoading = _b[1];
     useEffect(function () {
-        var _a;
-        var query = firebaseContext.db.collection(name);
+        var observer = refresh();
+        return function () {
+            observer === null || observer === void 0 ? void 0 : observer();
+        };
+    }, []);
+    var refresh = function () {
+        setLoading(true);
+        setDocuments([]);
+        var query = firebaseContext.db.collection(props.name);
         var finalQuery;
-        if (sort) {
+        if (props.sort) {
             var sorts = void 0;
-            if (Array.isArray(sort)) {
-                sorts = sort;
+            if (Array.isArray(props.sort)) {
+                sorts = props.sort;
             }
             else {
-                sorts = [sort];
+                sorts = [props.sort];
             }
             finalQuery = sorts.reduce(function (query, sort) {
                 return query.orderBy(sort.field, sort.direction);
@@ -38,20 +42,30 @@ function useCollection(_a) {
             finalQuery = query;
         }
         var finalQueryLimited;
-        if (limit) {
-            finalQueryLimited = finalQuery.limit(limit);
+        if (props.limit) {
+            finalQueryLimited = finalQuery.limit(props.limit);
         }
         else {
             finalQueryLimited = finalQuery;
         }
         var finalQueryFiltered;
-        if (where) {
-            finalQueryFiltered = finalQueryLimited.where(where.field, (_a = where.operator) !== null && _a !== void 0 ? _a : "==", where.value);
+        if (props.where) {
+            var wheres = void 0;
+            if (Array.isArray(props.where)) {
+                wheres = props.where;
+            }
+            else {
+                wheres = [props.where];
+            }
+            finalQueryFiltered = wheres.reduce(function (query, where) {
+                var _a;
+                return query.where(where.field, (_a = where.operator) !== null && _a !== void 0 ? _a : "==", where.value);
+            }, query);
         }
         else {
             finalQueryFiltered = finalQueryLimited;
         }
-        if (once) {
+        if (props.once) {
             finalQueryFiltered.get().then(_handleSnapshots).catch(_handleError);
         }
         else {
@@ -60,24 +74,26 @@ function useCollection(_a) {
                 observer_1();
             };
         }
-    }, []);
+    };
     var _handleSnapshots = function (snapshot) {
         if (snapshot.size) {
             var documents_1 = [];
             snapshot.docs
-                .filter(function (doc) { return doc.id !== excludeID; })
+                .filter(function (doc) { return doc.id !== props.excludeID; })
                 .forEach(function (doc) { return documents_1.push(__assign(__assign({}, doc.data()), { uid: doc.id })); });
-            setDocuments({ loading: false, documents: documents_1 });
+            setDocuments(documents_1);
         }
         else {
-            setDocuments({ loading: false, documents: [] });
+            setDocuments([]);
         }
+        setLoading(false);
     };
     var _handleError = function (error) {
         console.log("Error getting collection", error);
-        setDocuments({ loading: false, documents: [] });
+        setDocuments([]);
+        setLoading(false);
     };
-    return documents;
+    return { loading: loading, documents: documents, refresh: refresh };
 }
 export default useCollection;
 //# sourceMappingURL=useCollection.js.map

@@ -11,24 +11,29 @@ var __assign = (this && this.__assign) || function () {
 };
 import { useContext, useEffect, useState } from "react";
 import FirebaseContext from "./context";
-function useCollection(_a) {
-    var name = _a.name, where = _a.where, _b = _a.once, once = _b === void 0 ? false : _b;
+function useCollection(props) {
     var firebaseContext = useContext(FirebaseContext);
-    var _c = useState({
-        loading: true,
-        documents: [],
-    }), documents = _c[0], setDocuments = _c[1];
+    var _a = useState([]), documents = _a[0], setDocuments = _a[1];
+    var _b = useState(true), loading = _b[0], setLoading = _b[1];
     useEffect(function () {
+        var observer = refresh();
+        return function () {
+            observer === null || observer === void 0 ? void 0 : observer();
+        };
+    }, []);
+    var refresh = function () {
         var _a;
-        var query = firebaseContext.db.collectionGroup(name);
+        setLoading(true);
+        setDocuments([]);
+        var query = firebaseContext.db.collectionGroup(props.name);
         var finalQueryFiltered;
-        if (where) {
-            finalQueryFiltered = query.where(where.field, (_a = where.operator) !== null && _a !== void 0 ? _a : "==", where.value);
+        if (props.where) {
+            finalQueryFiltered = query.where(props.where.field, (_a = props.where.operator) !== null && _a !== void 0 ? _a : "==", props.where.value);
         }
         else {
             finalQueryFiltered = query;
         }
-        if (once) {
+        if (props.once) {
             finalQueryFiltered.get().then(_handleSnapshots).catch(_handleError);
         }
         else {
@@ -37,7 +42,7 @@ function useCollection(_a) {
                 observer_1();
             };
         }
-    }, []);
+    };
     var _handleSnapshots = function (snapshot) {
         if (snapshot.size) {
             var documents_1 = [];
@@ -45,17 +50,19 @@ function useCollection(_a) {
                 var _a;
                 return documents_1.push(__assign(__assign({}, doc.data()), { uid: doc.id, parentID: (_a = doc.ref.parent.parent) === null || _a === void 0 ? void 0 : _a.id }));
             });
-            setDocuments({ loading: false, documents: documents_1 });
+            setDocuments(documents_1);
         }
         else {
-            setDocuments({ loading: false, documents: [] });
+            setDocuments([]);
         }
+        setLoading(false);
     };
     var _handleError = function (error) {
         console.log("Error getting collectionGroup", error);
-        setDocuments({ loading: false, documents: [] });
+        setDocuments([]);
+        setLoading(false);
     };
-    return documents;
+    return { loading: loading, documents: documents, refresh: refresh };
 }
 export default useCollection;
 //# sourceMappingURL=useCollectionGroup.js.map
