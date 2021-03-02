@@ -83,7 +83,7 @@ function useCollection<T extends IdentifiedFirestoreDocument>(props: Props) {
             where.operator ?? "==",
             where.value
           ),
-        query
+          finalQueryLimited
       );
     } else {
       finalQueryFiltered = finalQueryLimited;

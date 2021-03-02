@@ -60,7 +60,7 @@ function useCollection(props) {
             finalQueryFiltered = wheres.reduce(function (query, where) {
                 var _a;
                 return query.where(where.field, (_a = where.operator) !== null && _a !== void 0 ? _a : "==", where.value);
-            }, query);
+            }, finalQueryLimited);
         }
         else {
             finalQueryFiltered = finalQueryLimited;
