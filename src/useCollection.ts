@@ -13,8 +13,6 @@ interface SortProps {
   field: string | firebase.firestore.FieldPath;
   direction: "asc" | "desc";
 }
-
-
 interface Props {
   name: string;
   where?: WhereProps | WhereProps[];

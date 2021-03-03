@@ -22,22 +22,54 @@ function useCollection(props) {
         };
     }, []);
     var refresh = function () {
-        var _a;
         setLoading(true);
         setDocuments([]);
         var query = firebaseContext.db.collectionGroup(props.name);
+        var finalQuery;
+        if (props.sort) {
+            var sorts = void 0;
+            if (Array.isArray(props.sort)) {
+                sorts = props.sort;
+            }
+            else {
+                sorts = [props.sort];
+            }
+            finalQuery = sorts.reduce(function (query, sort) {
+                return query.orderBy(sort.field, sort.direction);
+            }, query);
+        }
+        else {
+            finalQuery = query;
+        }
         var finalQueryFiltered;
         if (props.where) {
-            finalQueryFiltered = query.where(props.where.field, (_a = props.where.operator) !== null && _a !== void 0 ? _a : "==", props.where.value);
+            var wheres = void 0;
+            if (Array.isArray(props.where)) {
+                wheres = props.where;
+            }
+            else {
+                wheres = [props.where];
+            }
+            finalQueryFiltered = wheres.reduce(function (query, where) {
+                var _a;
+                return query.where(where.field, (_a = where.operator) !== null && _a !== void 0 ? _a : "==", where.value);
+            }, finalQuery);
         }
         else {
-            finalQueryFiltered = query;
+            finalQueryFiltered = finalQuery;
+        }
+        var finalQueryLimited;
+        if (props.limit) {
+            finalQueryLimited = finalQueryFiltered.limit(props.limit);
+        }
+        else {
+            finalQueryLimited = finalQueryFiltered;
         }
         if (props.once) {
-            finalQueryFiltered.get().then(_handleSnapshots).catch(_handleError);
+            finalQueryLimited.get().then(_handleSnapshots).catch(_handleError);
         }
         else {
-            var observer_1 = finalQueryFiltered.onSnapshot(_handleSnapshots, _handleError);
+            var observer_1 = finalQueryLimited.onSnapshot(_handleSnapshots, _handleError);
             return function () {
                 observer_1();
             };
