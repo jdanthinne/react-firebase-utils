@@ -4,19 +4,19 @@ import firebase from "firebase";
 import FirebaseContext from "./context";
 import { IdentifiedFirestoreDocument } from "./types";
 
-interface WhereProps {
+export interface CollectionGroupWhereProps {
   field: string | firebase.firestore.FieldPath;
   operator?: firebase.firestore.WhereFilterOp;
   value: any;
 }
-interface SortProps {
+export interface CollectionGroupSortProps {
   field: string | firebase.firestore.FieldPath;
   direction: "asc" | "desc";
 }
 interface Props {
   name: string;
-  where?: WhereProps | WhereProps[];
-  sort?: SortProps | SortProps[];
+  where?: CollectionGroupWhereProps | CollectionGroupWhereProps[];
+  sort?: CollectionGroupSortProps | CollectionGroupSortProps[];
   limit?: number;
   once?: boolean;
 }
@@ -43,7 +43,7 @@ function useCollection<T extends IdentifiedFirestoreDocument>(props: Props) {
 
     let finalQuery;
     if (props.sort) {
-      let sorts: SortProps[];
+      let sorts: CollectionGroupSortProps[];
       if (Array.isArray(props.sort)) {
         sorts = props.sort;
       } else {
@@ -60,7 +60,7 @@ function useCollection<T extends IdentifiedFirestoreDocument>(props: Props) {
 
     let finalQueryFiltered;
     if (props.where) {
-      let wheres: WhereProps[];
+      let wheres: CollectionGroupWhereProps[];
       if (Array.isArray(props.where)) {
         wheres = props.where;
       } else {

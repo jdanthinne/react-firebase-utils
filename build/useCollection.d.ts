@@ -1,18 +1,18 @@
 import firebase from "firebase";
 import { IdentifiedFirestoreDocument } from "./types";
-interface WhereProps {
+export interface CollectionWhereProps {
     field: string | firebase.firestore.FieldPath;
     operator?: firebase.firestore.WhereFilterOp;
     value: any;
 }
-interface SortProps {
+export interface CollectionSortProps {
     field: string | firebase.firestore.FieldPath;
     direction: "asc" | "desc";
 }
 interface Props {
     name: string;
-    where?: WhereProps | WhereProps[];
-    sort?: SortProps | SortProps[];
+    where?: CollectionWhereProps | CollectionWhereProps[];
+    sort?: CollectionSortProps | CollectionSortProps[];
     limit?: number;
     once?: boolean;
     excludeID?: string;
