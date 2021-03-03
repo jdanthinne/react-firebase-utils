@@ -20,6 +20,7 @@ import useDocument from "./useDocument";
 import firebaseApp from "firebase/app";
 export default Firebase;
 export var FieldValue = firebaseApp.firestore.FieldValue;
+export var FieldPath = firebaseApp.firestore.FieldPath;
 var Timestamp = (function (_super) {
     __extends(Timestamp, _super);
     function Timestamp() {

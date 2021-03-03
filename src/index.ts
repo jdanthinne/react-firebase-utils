@@ -11,6 +11,7 @@ import firebaseApp from "firebase/app";
 export default Firebase;
 
 export const FieldValue = firebaseApp.firestore.FieldValue;
+export const FieldPath = firebaseApp.firestore.FieldPath;
 export class Timestamp extends firebaseApp.firestore.Timestamp {}
 export class GeoPoint extends firebaseApp.firestore.GeoPoint {}
 
